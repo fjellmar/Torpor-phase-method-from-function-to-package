@@ -1,6 +1,7 @@
 #### Packages needed ####
 library(dplyr)
-library(tidyr)
+library(testthat)
+#library(tidyr)
 
 # Libraries needed for plotting (after running the function)
 library(ggplot2)
@@ -108,49 +109,48 @@ names(testdata)[names(testdata) == 't_onset'] <- 'torpor_onset'
 #### 1. function - checking that the dataset has the necessary columns needed and that temperature values are logic ####  
 check_dataset <- function(.data) {
   if(!any(names(.data)=="body_temp")) {
-    stop("column body_temp is missing")
+    stop("column body_temp is missing")  # checks if the dataset has the column-name "body_temp" included
   }
   if(!any(names(.data)=="id")) {
-    stop("column id is missing")
+    stop("column id is missing")  # checks if the dataset has the column-name "id" included
   }
   if(!any(names(.data)=="torpor_onset")) {
-    stop("column torpor_onset is missing")
+    stop("column torpor_onset is missing")  # checks if the dataset has the column-name "torpor_onset" included
   }
   if(max(.data$body_temp, na.rm=T) > 60) {
-    stop("body temperature values above 60 degrees detected - check values")
+    stop("body temperature values above 60 degrees detected - check values") # checks if the temperature values are biologically sound
   }
   if(min(.data$body_temp, na.rm=T) < -20) {
-    stop("body temperature values below -20 degrees detected - check values")
+    stop("body temperature values below -20 degrees detected - check values") # checks if the temperature values are biologically sound
   }
 }
 
-#### 2. function - add two columns for body temperature lag and indicate whether data is missing ####
-
+#### 2. function - add three columns: body temperature with one or two lags, and column for whether body temperature is below threshold ####
 add_temp_lag_cols <- function(.data) {
   .data |>
     dplyr::group_by(id) |>
     dplyr::mutate(
-      body_temp_diff = (body_temp - lag(body_temp, n = 1, default = NA)),
-      body_temp_diff_2 = (body_temp - lag(body_temp, n = 2, default = NA)),
-      below_threshold = ifelse(is.na(body_temp < torpor_onset), "No data", body_temp < torpor_onset)
+      body_temp_diff = (body_temp - lag(body_temp, n = 1, default = NA)), # adds column with lag 1 temperatures
+      body_temp_diff_2 = (body_temp - lag(body_temp, n = 2, default = NA)), # adds column with lag 2 temperatures
+      below_threshold = ifelse(is.na(body_temp < torpor_onset), "No data", body_temp < torpor_onset) # makes new column with TRUE/FALSE based on whether body_temp is below or above the threshold, or no data for missing values
     )
 }  
 
-#### 3. function ####
-
-myrleid <- function(x) {
+#### 3. function - adding two columns: id of each section of unique below_threshold, and the length of each such section ####
+myrleid <- function(x) { # small function for numbering each section
   x <- rle(x)$lengths
   rep(seq_along(x), times=x)
 }
 
-  
-  torpor_dataset <- df1 |>
+add_section_numbers <- function(.data) { # function for adding the two columns to the dataset
+   .data |>
     dplyr::mutate(
-      count_length = with(rle(below_threshold), rep(lengths, lengths)),
-      num = myrleid(below_threshold)
+      num = myrleid(below_threshold), # ading column with number-id of each section
+      count_length = with(rle(below_threshold), rep(lengths, lengths)) # length of each section 
       )
-    
-  group_by(yy = with(rle(x), rep(seq_along(lengths), lengths))) %>%
+}
+ 
+ 
 
   torpor_dataset$Torpor <- ifelse(torpor_dataset$below_threshold == TRUE, "Torpor", "Not torpor")
 
