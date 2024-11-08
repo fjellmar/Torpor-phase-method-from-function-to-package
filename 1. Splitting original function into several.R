@@ -103,8 +103,8 @@ na_allow <- 4
 #torpor_phase_function <- function(sensitivity, within_bout_sensitivity) {
 testdata <- readr::read_csv("testdata.csv")
 testdata <- janitor::clean_names(testdata)
-colnames(testdata) <- c("ID", "species", "sex", "t_onset", "body_temp")
-check_dataset(testdata)
+names(testdata)[names(testdata) == 'tb'] <- 'body_temp'
+
 #### 1. function - checking that the dataset has the necessary columns needed and that temperature values are logic ####  
 check_dataset <- function(.data) {
   if(!any(names(.data)=="body_temp")) {
@@ -121,13 +121,18 @@ check_dataset <- function(.data) {
   }
 }
 
-#### 2. function - add two columns for body temperature lag and  ####
-  df <- data_testing %>%
-    group_by(ID) %>%
+#### 2. function - add two columns for body temperature lag and indicate whether data is missing ####
+
+add_temp_lag_cols <- function(.data) {
+  data_f2 <- .data %>%
+    group_by(id) %>%
     mutate(
-      Tb_diff = (Tb - lag(Tb, n = 1, default = NA)),
-      Tb_diff_2 = (Tb - lag(Tb, n = 2, default = NA))
+      body_temp_diff = (body_temp - lag(body_temp, n = 1, default = NA)),
+      body_temp_diff_2 = (body_temp - lag(body_temp, n = 2, default = NA)),
+      below_threshold = ifelse(is.na(body_temp < t_onset), "No data", body_temp < t_onset)
     )
+}  
+
 
   df$below_threshold <- ifelse(is.na(df$below_threshold), "No data", df$below_threshold)
 
