@@ -103,6 +103,7 @@ na_allow <- 4
 #torpor_phase_function <- function(sensitivity, within_bout_sensitivity) {
 testdata <- readr::read_csv("testdata.csv")
 testdata <- janitor::clean_names(testdata)
+colnames(testdata) <- c("ID", "species", "sex", "t_onset", "body_temp")
 
 #### 1. function - checking that the dataset has the necessary columns needed ####  
 check_dataset <- function(.data) {
@@ -113,7 +114,6 @@ check_dataset <- function(.data) {
     stop("column id is missing")
   }
 }
-
 
 #### 2. function - add two columns for body temperature lag and  ####
   df <- data_testing %>%
