@@ -128,9 +128,9 @@ check_dataset <- function(.data) {
 #### 2. function - add two columns for body temperature lag and indicate whether data is missing ####
 
 add_temp_lag_cols <- function(.data) {
-  data_f2 <- .data %>%
-    group_by(id) %>%
-    mutate(
+  data_f2 <- .data |>
+    dplyr::group_by(id) |>
+    dplyr::mutate(
       body_temp_diff = (body_temp - lag(body_temp, n = 1, default = NA)),
       body_temp_diff_2 = (body_temp - lag(body_temp, n = 2, default = NA)),
       below_threshold = ifelse(is.na(body_temp < torpor_onset), "No data", body_temp < torpor_onset)
@@ -138,7 +138,6 @@ add_temp_lag_cols <- function(.data) {
 }  
 
 
-  df$below_threshold <- ifelse(is.na(df$below_threshold), "No data", df$below_threshold)
 
 #### 3. function ####
   setDT(df)
