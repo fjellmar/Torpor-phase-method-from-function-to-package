@@ -156,36 +156,35 @@ add_section_numbers <- function(.data) { # function for adding the three columns
  
 #### 4. function --- ####
 
-  torpor_dataset$Torpor <- ifelse(torpor_dataset$below_threshold == TRUE, "Torpor", "Not torpor")
+function(.data) {
+  my_vec <- numeric(nrow(.data))
 
-  my_vec <- numeric()
-
-  for (i in 1:(nrow(torpor_dataset))) {
+  for (i in 1:(nrow(.data))) {
     if (i == 1) {
-      my_vec[i] <- "No"
-    } else if (i == nrow(torpor_dataset)) {
-      my_vec[i] <- "No"
+      my_vec[i] <- "no"
+    } else if (i == nrow(.data)) {
+      my_vec[i] <- "no"
     } else {
-      if (torpor_dataset[c(i), c("Torpor")] == "Not torpor" & torpor_dataset[c(i - 1), c("Torpor")] == "Torpor" & !is.na(torpor_dataset[c(i), c("Tb_diff")]) & torpor_dataset[c(i), c("Tb_diff")] > sensitivity) {
-        my_vec[i] <- "Exiting"
-      } else if (torpor_dataset[c(i), c("Torpor")] == "Not torpor" & torpor_dataset[c(i - 1), c("Torpor")] == "Torpor" & !is.na(torpor_dataset[c(i), c("Tb_diff")]) & torpor_dataset[c(i), c("Tb_diff")] <= sensitivity &
-        !is.na(torpor_dataset[c(i + 1), c("Tb_diff")]) & torpor_dataset[c(i + 1), c("Tb_diff")] > sensitivity) {
-        my_vec[i + 1] <- "Exiting"
-      } else if (torpor_dataset[c(i), c("Torpor")] == "Not torpor" & torpor_dataset[c(i - 1), c("Torpor")] == "Torpor" & !is.na(torpor_dataset[c(i), c("Tb_diff")]) & torpor_dataset[c(i), c("Tb_diff")] <= sensitivity &
-        !is.na(torpor_dataset[c(i - 1), c("Tb_diff")]) & torpor_dataset[c(i - 1), c("Tb_diff")] > sensitivity) {
-        my_vec[i - 1] <- "Exiting"
-      } else if (torpor_dataset[c(i), c("Torpor")] == "Torpor" & torpor_dataset[c(i - 1), c("Torpor")] == "Not torpor" & !is.na(torpor_dataset[c(i), c("Tb_diff")]) & torpor_dataset[c(i), c("Tb_diff")] < -sensitivity) {
-        my_vec[i] <- "Entering"
-      } else if (torpor_dataset[c(i), c("Torpor")] == "Torpor" & torpor_dataset[c(i - 1), c("Torpor")] == "Not torpor" & !is.na(torpor_dataset[c(i), c("Tb_diff")]) & torpor_dataset[c(i), c("Tb_diff")] >= -sensitivity &
-        !is.na(torpor_dataset[c(i - 1), c("Tb_diff")]) & torpor_dataset[c(i - 1), c("Tb_diff")] < -sensitivity) {
-        my_vec[i - 1] <- "Entering"
-      } else if (torpor_dataset[c(i), c("Torpor")] == "Torpor" & torpor_dataset[c(i - 1), c("Torpor")] == "Not torpor" & !is.na(torpor_dataset[c(i), c("Tb_diff")]) & torpor_dataset[c(i), c("Tb_diff")] >= -sensitivity &
-        !is.na(torpor_dataset[c(i + 1), c("Tb_diff")]) & torpor_dataset[c(i + 1), c("Tb_diff")] < -sensitivity) {
-        my_vec[i + 1] <- "Entering"
+      if (.data[c(i), c("torpor")] == "not torpor" & .data[c(i - 1), c("torpor")] == "torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] > sensitivity) {
+        my_vec[i] <- "exiting"
+      } else if (.data[c(i), c("torpor")] == "not torpor" & .data[c(i - 1), c("torpor")] == "torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] <= sensitivity &
+        !is.na(.data[c(i + 1), c("body_temp_diff")]) & .data[c(i + 1), c("body_temp_diff")] > sensitivity) {
+        my_vec[i + 1] <- "exiting"
+      } else if (.data[c(i), c("torpor")] == "not torpor" & .data[c(i - 1), c("torpor")] == "torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] <= sensitivity &
+        !is.na(.data[c(i - 1), c("body_temp_diff")]) & .data[c(i - 1), c("body_temp_diff")] > sensitivity) {
+        my_vec[i - 1] <- "exiting"
+      } else if (.data[c(i), c("torpor")] == "torpor" & .data[c(i - 1), c("torpor")] == "not torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] < -sensitivity) {
+        my_vec[i] <- "entering"
+      } else if (.data[c(i), c("torpor")] == "torpor" & .data[c(i - 1), c("torpor")] == "not torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] >= -sensitivity &
+        !is.na(.data[c(i - 1), c("body_temp_diff")]) & .data[c(i - 1), c("body_temp_diff")] < -sensitivity) {
+        my_vec[i - 1] <- "entering"
+      } else if (.data[c(i), c("torpor")] == "torpor" & .data[c(i - 1), c("torpor")] == "not torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] >= -sensitivity &
+        !is.na(.data[c(i + 1), c("body_temp_diff")]) & .data[c(i + 1), c("body_temp_diff")] < -sensitivity) {
+        my_vec[i + 1] <- "entering"
       }
     }
   }
-
+}
   
 #### 5. function --- ####
   my_vec <- ifelse(is.na(my_vec), "No", my_vec)
