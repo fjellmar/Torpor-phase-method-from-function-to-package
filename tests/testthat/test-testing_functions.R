@@ -40,6 +40,7 @@ test_that("adding the three columns body_temp_diff, body_temp_diff_2 and below_t
   df <- tibble(below_threshold = c(TRUE,FALSE,TRUE,TRUE))
   expect_equal(add_section_numbers(df), tibble(below_threshold = c(TRUE,FALSE,TRUE,TRUE), 
                                                num = c(1,2,3,3),
-                                               count_length = c(1,1,2,2)))
+                                               count_length = c(1,1,2,2),
+                                               torpor = c("torpor", "not torpor", "torpor", "torpor")))
 })
 

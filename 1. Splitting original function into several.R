@@ -106,7 +106,8 @@ testdata <- janitor::clean_names(testdata)
 names(testdata)[names(testdata) == 'tb'] <- 'body_temp'
 names(testdata)[names(testdata) == 't_onset'] <- 'torpor_onset'
 
-#### 1. function - checking that the dataset has the necessary columns needed and that temperature values are logic ####  
+#### 1. function --- checking that the dataset has the necessary columns needed and that temperature values are logic ####  
+
 check_dataset <- function(.data) {
   if(!any(names(.data)=="body_temp")) {
     stop("column body_temp is missing")  # checks if the dataset has the column-name "body_temp" included
@@ -125,9 +126,10 @@ check_dataset <- function(.data) {
   }
 }
 
-#### 2. function - add three columns: body temperature with one or two lags, and column for whether body temperature is below threshold ####
+#### 2. function --- add three columns: body temperature with one or two lags, and column for whether body temperature is below threshold ####
+
 add_temp_lag_cols <- function(.data) {
-  .data |>
+  test |>
     dplyr::group_by(id) |>
     dplyr::mutate(
       body_temp_diff = (body_temp - lag(body_temp, n = 1, default = NA)), # adds column with lag 1 temperatures
@@ -136,21 +138,23 @@ add_temp_lag_cols <- function(.data) {
     )
 }  
 
-#### 3. function - adding two columns: id of each section of unique below_threshold, and the length of each such section ####
+#### 3. function --- adding three columns: id of each section of unique below_threshold, length of each such section, and whether bat is torpid or not ####
+
 myrleid <- function(x) { # small function for numbering each section
   x <- rle(x)$lengths
   rep(seq_along(x), times=x)
 }
 
-add_section_numbers <- function(.data) { # function for adding the two columns to the dataset
+add_section_numbers <- function(.data) { # function for adding the three columns to the dataset
    .data |>
     dplyr::mutate(
       num = myrleid(below_threshold), # ading column with number-id of each section
-      count_length = with(rle(below_threshold), rep(lengths, lengths)) # length of each section 
+      count_length = with(rle(below_threshold), rep(lengths, lengths)), # length of each section 
+      torpor = ifelse(below_threshold == TRUE, "torpor", "not torpor")
       )
 }
  
- 
+#### 4. function --- ####
 
   torpor_dataset$Torpor <- ifelse(torpor_dataset$below_threshold == TRUE, "Torpor", "Not torpor")
 
@@ -182,6 +186,8 @@ add_section_numbers <- function(.data) { # function for adding the two columns t
     }
   }
 
+  
+#### 5. function --- ####
   my_vec <- ifelse(is.na(my_vec), "No", my_vec)
   torpor_dataset$phase_start <- my_vec
 
