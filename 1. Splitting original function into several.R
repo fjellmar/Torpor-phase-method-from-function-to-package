@@ -104,6 +104,7 @@ na_allow <- 4
 testdata <- readr::read_csv("testdata.csv")
 testdata <- janitor::clean_names(testdata)
 names(testdata)[names(testdata) == 'tb'] <- 'body_temp'
+names(testdata)[names(testdata) == 't_onset'] <- 'torpor_onset'
 
 #### 1. function - checking that the dataset has the necessary columns needed and that temperature values are logic ####  
 check_dataset <- function(.data) {
@@ -112,6 +113,9 @@ check_dataset <- function(.data) {
   }
   if(!any(names(.data)=="id")) {
     stop("column id is missing")
+  }
+  if(!any(names(.data)=="torpor_onset")) {
+    stop("column torpor_onset is missing")
   }
   if(max(.data$body_temp, na.rm=T) > 60) {
     stop("body temperature values above 60 degrees detected - check values")
@@ -129,7 +133,7 @@ add_temp_lag_cols <- function(.data) {
     mutate(
       body_temp_diff = (body_temp - lag(body_temp, n = 1, default = NA)),
       body_temp_diff_2 = (body_temp - lag(body_temp, n = 2, default = NA)),
-      below_threshold = ifelse(is.na(body_temp < t_onset), "No data", body_temp < t_onset)
+      below_threshold = ifelse(is.na(body_temp < torpor_onset), "No data", body_temp < torpor_onset)
     )
 }  
 
