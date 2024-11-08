@@ -101,16 +101,16 @@ na_allow <- 4
 #### RUNNING THE FUNCTION ####
 
 #torpor_phase_function <- function(sensitivity, within_bout_sensitivity) {
-Testdata <- readr::read_csv("Testdata.csv")
-names(Testdata)
-Testdata <- janitor::clean_names(Testdata)
+testdata <- readr::read_csv("testdata.csv")
+testdata <- janitor::clean_names(testdata)
 
 #### 1. function - checking that the dataset has the necessary columns needed ####  
 check_dataset <- function(.data) {
-  if(!body_temp %in% names(.data) | !id %in% names(.data)) {
-    print ("one or more column names missing: check that the column-names id and body_temp are included in dataset")
-  } else {
-    
+  if(!any(names(.data)=="body_temp")) {
+    stop("column body_temp is missing")
+  }
+  if(!any(names(.data)=="id")) {
+    stop("column id is missing")
   }
 }
 
