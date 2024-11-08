@@ -105,13 +105,19 @@ testdata <- readr::read_csv("testdata.csv")
 testdata <- janitor::clean_names(testdata)
 colnames(testdata) <- c("ID", "species", "sex", "t_onset", "body_temp")
 
-#### 1. function - checking that the dataset has the necessary columns needed ####  
+#### 1. function - checking that the dataset has the necessary columns needed and that temperature values are logic ####  
 check_dataset <- function(.data) {
   if(!any(names(.data)=="body_temp")) {
     stop("column body_temp is missing")
   }
   if(!any(names(.data)=="id")) {
     stop("column id is missing")
+  }
+  if(.data$body_temp > 60) {
+    stop("body temperature values above 60 degrees detected - check values")
+  }
+  if(.data$body_temp < -20) {
+    stop("body temperature values below -20 degrees detected - check values")
   }
 }
 
