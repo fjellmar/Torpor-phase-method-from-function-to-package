@@ -1,6 +1,5 @@
 #### Packages needed ####
 library(dplyr)
-library(data.table)
 library(tidyr)
 
 # Libraries needed for plotting (after running the function)
@@ -128,7 +127,7 @@ check_dataset <- function(.data) {
 #### 2. function - add two columns for body temperature lag and indicate whether data is missing ####
 
 add_temp_lag_cols <- function(.data) {
-  data_f2 <- .data |>
+  .data |>
     dplyr::group_by(id) |>
     dplyr::mutate(
       body_temp_diff = (body_temp - lag(body_temp, n = 1, default = NA)),
@@ -137,11 +136,21 @@ add_temp_lag_cols <- function(.data) {
     )
 }  
 
-
-
 #### 3. function ####
-  setDT(df)
-  torpor_dataset <- as.data.frame(df[, count_length := with(rle(below_threshold), rep(lengths, lengths))][, num := rleid(below_threshold)])
+
+myrleid <- function(x) {
+  x <- rle(x)$lengths
+  rep(seq_along(x), times=x)
+}
+
+  
+  torpor_dataset <- df1 |>
+    dplyr::mutate(
+      count_length = with(rle(below_threshold), rep(lengths, lengths)),
+      num = myrleid(below_threshold)
+      )
+    
+  group_by(yy = with(rle(x), rep(seq_along(lengths), lengths))) %>%
 
   torpor_dataset$Torpor <- ifelse(torpor_dataset$below_threshold == TRUE, "Torpor", "Not torpor")
 
