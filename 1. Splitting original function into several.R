@@ -1,3 +1,14 @@
+#### Packages needed ####
+library(dplyr)
+library(data.table)
+library(tidyr)
+
+# Libraries needed for plotting (after running the function)
+library(ggplot2)
+library(gridExtra)
+library(ggplotify)
+
+
 ### R-CODES FOR DETERMINING TORPOR ENTRIES AND EXITS FROM SKIN- OR BODY-TEMPERATURE DATA ###
 
 # This script contains descriptions and codes for applying the methods presented in the JTB article by
@@ -28,15 +39,6 @@
 #   keeps a consecutive data period from the first observation until the last (there were cases of
 #   several days of missing data for some individuals in the dataset for which this code was built).
 
-# Libraries needed to run the function
-library(dplyr)
-library(data.table)
-library(tidyr)
-
-# Libraries needed for plotting (after running the function)
-library(ggplot2)
-library(gridExtra)
-library(ggplotify)
 
 interval_length <- 10 # (The time between datapoints given in minutes, only necessary for graphing and analyses purposes after running the function)
 
