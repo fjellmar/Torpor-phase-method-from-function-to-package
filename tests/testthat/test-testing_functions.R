@@ -28,7 +28,7 @@ test_that("myrleid function working with TRUE/FALSE", {
 })
 
 
-# Test if add_section_numbers function works, adding 
+# Test if add_section_numbers function works
 test_that("adding the three columns body_temp_diff, body_temp_diff_2 and below_threshold works", {
   df <- tibble(below_threshold = c(TRUE,FALSE,TRUE,TRUE))
   expect_equal(add_section_numbers(df), tibble(below_threshold = c(TRUE,FALSE,TRUE,TRUE), 
@@ -36,4 +36,14 @@ test_that("adding the three columns body_temp_diff, body_temp_diff_2 and below_t
                                                count_length = c(1,1,2,2),
                                                torpor_col = c("torpor", "not torpor", "torpor", "torpor")))
 })
+
+
+# Test if add_phase_start function works 
+test_that("function adds the column phase_start", {
+  df <- tibble(below_threshold = c(TRUE,FALSE,TRUE,TRUE))
+  expect_equal(add_phase_start(df), tibble(below_threshold = c(TRUE,FALSE,TRUE,TRUE), 
+                                           phase_start = c("not phasestart","exiting","entering","not phasestart")))
+})
+
+
 
