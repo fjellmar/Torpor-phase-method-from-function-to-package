@@ -150,42 +150,21 @@ add_section_numbers <- function(.data) { # function for adding the three columns
     dplyr::mutate(
       num = myrleid(below_threshold), # ading column with number-id of each section
       count_length = with(rle(below_threshold), rep(lengths, lengths)), # length of each section 
-      torpor = ifelse(below_threshold == TRUE, "torpor", "not torpor")
+      torpor_col = ifelse(below_threshold == TRUE, "torpor", "not torpor") # adding column for torpor/non torpor
       )
 }
- 
-#### 4. function --- ####
 
-function(.data) {
-  my_vec <- numeric(nrow(.data))
+#### 4. function --- adding the column phase_start for indicating the start of torpor entries and torpor exits ####
 
-  for (i in 1:(nrow(.data))) {
-    if (i == 1) {
-      my_vec[i] <- "no"
-    } else if (i == nrow(.data)) {
-      my_vec[i] <- "no"
-    } else {
-      if (.data[c(i), c("torpor")] == "not torpor" & .data[c(i - 1), c("torpor")] == "torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] > sensitivity) {
-        my_vec[i] <- "exiting"
-      } else if (.data[c(i), c("torpor")] == "not torpor" & .data[c(i - 1), c("torpor")] == "torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] <= sensitivity &
-        !is.na(.data[c(i + 1), c("body_temp_diff")]) & .data[c(i + 1), c("body_temp_diff")] > sensitivity) {
-        my_vec[i + 1] <- "exiting"
-      } else if (.data[c(i), c("torpor")] == "not torpor" & .data[c(i - 1), c("torpor")] == "torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] <= sensitivity &
-        !is.na(.data[c(i - 1), c("body_temp_diff")]) & .data[c(i - 1), c("body_temp_diff")] > sensitivity) {
-        my_vec[i - 1] <- "exiting"
-      } else if (.data[c(i), c("torpor")] == "torpor" & .data[c(i - 1), c("torpor")] == "not torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] < -sensitivity) {
-        my_vec[i] <- "entering"
-      } else if (.data[c(i), c("torpor")] == "torpor" & .data[c(i - 1), c("torpor")] == "not torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] >= -sensitivity &
-        !is.na(.data[c(i - 1), c("body_temp_diff")]) & .data[c(i - 1), c("body_temp_diff")] < -sensitivity) {
-        my_vec[i - 1] <- "entering"
-      } else if (.data[c(i), c("torpor")] == "torpor" & .data[c(i - 1), c("torpor")] == "not torpor" & !is.na(.data[c(i), c("body_temp_diff")]) & .data[c(i), c("body_temp_diff")] >= -sensitivity &
-        !is.na(.data[c(i + 1), c("body_temp_diff")]) & .data[c(i + 1), c("body_temp_diff")] < -sensitivity) {
-        my_vec[i + 1] <- "entering"
-      }
-    }
-  }
+add_phase_start <- function(.data) {
+.data |>
+  dplyr::mutate(phase_start = case_when(
+    below_threshold == F & lag(below_threshold == T) ~ "exiting",
+    below_threshold == T & lag(below_threshold == F) ~ "entering",
+    TRUE ~ "not phasestart"
+  ))
 }
-  
+
 #### 5. function --- ####
   my_vec <- ifelse(is.na(my_vec), "No", my_vec)
   torpor_dataset$phase_start <- my_vec
