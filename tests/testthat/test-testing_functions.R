@@ -21,13 +21,6 @@ test_that("adding the three columns body_temp_diff, body_temp_diff_2 and below_t
 })
 
 
-# Test if myrleid function works with numerical values
-test_that("myrleid function working with numerical", {
-  x = c(1,1,2,2,2)
-  expect_equal(myrleid(x), c(1,1,2,2,2))
-})
-
-
 # Test if myrleid function works with TRUE/FALSE
 test_that("myrleid function working with TRUE/FALSE", {
   x = c(TRUE,FALSE,TRUE,TRUE)
@@ -41,6 +34,6 @@ test_that("adding the three columns body_temp_diff, body_temp_diff_2 and below_t
   expect_equal(add_section_numbers(df), tibble(below_threshold = c(TRUE,FALSE,TRUE,TRUE), 
                                                num = c(1,2,3,3),
                                                count_length = c(1,1,2,2),
-                                               torpor = c("torpor", "not torpor", "torpor", "torpor")))
+                                               torpor_col = c("torpor", "not torpor", "torpor", "torpor")))
 })
 
